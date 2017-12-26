@@ -26,9 +26,9 @@ def mycut(x,stop):
     return t
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print(sys.argv[0])
-        print("Usage: wordcount <file>", file=sys.stderr)
+        print("Usage: wordcount <file> k", file=sys.stderr)
         exit(-1)
 
     #读取停词文件
@@ -43,16 +43,14 @@ if __name__ == "__main__":
         .getOrCreate()
 
     lines = spark.read.text(sys.argv[1]).rdd.map(lambda r: r[0])
-#    counts = lines.flatMap(lambda x: x.split(' ')) \
-#                  .map(lambda x: (x, 1)) \
-#                  .reduceByKey(add)
     counts = lines.flatMap(lambda x: mycut(x,t)) \
                   .map(lambda x: (x, 1)) \
                   .reduceByKey(add)
-    output = counts.collect()
-    f=open("/Users/wangke/Desktop/output1.txt",'a')
-    for (word, count) in output:
-        print("%s: %i" % (word, count))
-        f.write(word+","+str(count)+"\n")
+    output = counts.map(lambda x:(x[1],x[0])).sortByKey(False).collect()
+    f=open("/Users/wangke/Desktop/output2.txt",'a')
+    for (count, word) in output:
+        if(count>int(sys.argv[2])):
+            print("%s: %i" % (word, count))
+            f.write(word+","+str(count)+"\n")
 
     spark.stop()
