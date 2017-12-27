@@ -72,7 +72,8 @@ output = counts.map(lambda x:(x[1],x[0])).sortByKey(False).collect()
 ```
 + json格式的输出</br>
 
-![json](https://github.com/WangKe2333/spark/raw/master/picture/json.png)
+![json](https://github.com/WangKe2333/spark/raw/master/picture/json.png)</br>
+
 spark_sql(基于pyspark的实现)
 -----------------------------
 + 首先是基本的连接和实现</br>
